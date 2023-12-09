@@ -8,7 +8,7 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({envFilePath: 'src/config/.config.env',isGlobal: true}),
+    ConfigModule.forRoot({envFilePath: 'src/.env',isGlobal: true}),
     MongooseModule.forRoot(process.env.MONGODB),
     JwtModule.register({ secret:process.env.JWT_SECRET_KEY, signOptions: { expiresIn: '30d' } }),
     UsersModule,
