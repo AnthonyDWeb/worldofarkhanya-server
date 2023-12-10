@@ -13,19 +13,30 @@ export class UsersService {
     return createdUsers.save();
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.UsersModel.find({}, { password: 0 });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: String) {
+    return await this.UsersModel.findById(id);
+  }
+  async findOneByUsername(username: string) {
+    return await this.UsersModel.findOne({ username: username });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: String, updateUserDto: UpdateUserDto) {
+    return await this.UsersModel.findByIdAndUpdate(id, updateUserDto, {
+      new: true,
+    });
+  }
+  async updateField(category: String, data: any) {
+    return await this.UsersModel.updateMany(
+      {},
+      { ['$' + category]: { [data.field]: data.newValue } },
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: String) {
+    return await this.UsersModel.findByIdAndDelete(id);
   }
 }
