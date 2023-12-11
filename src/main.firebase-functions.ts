@@ -11,7 +11,7 @@ export const createNestServer = async (expressInstance) => {
     AppModule,
     new ExpressAdapter(expressInstance),
   );
-
+  app.enableCors();
   return app.init();
 };
 
