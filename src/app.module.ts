@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CreationModule } from './creation/creation.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     JwtModule.register({ global: true,secret:process.env.JWT_SECRET_KEY, signOptions: { expiresIn: '30d' } }),
     UsersModule,
     AuthModule,
+    CreationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
