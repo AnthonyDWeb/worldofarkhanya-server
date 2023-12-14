@@ -13,8 +13,16 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByUsername(username);
-    const isMatch = await bcrypt.compare(pass, user.password);
+    const isMatch = user && await bcrypt.compare(pass, user.password);
     if (isMatch) {
+      user.password = undefined;
+      return user;
+    }
+    throw new UnauthorizedException("Le nom d'utilisateur ou le mot de passe est incorrect");
+  }
+  async validateToken(username: string): Promise<any> {
+    const user = await this.usersService.findOneByUsername(username);
+    if (user) {
       user.password = undefined;
       return user;
     }
@@ -22,7 +30,15 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { username: user.username, sub: user._id };
+    return {
+      user: user,
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async loginToken(user: any) {
+    const payload = { username: user.username, sub: user._id };
     return {
       user: user,
       access_token: this.jwtService.sign(payload),
@@ -36,6 +52,5 @@ export class AuthService {
     user.password = await bcrypt.hash(user.password, 15);
     const createUser = await this.usersService.create(user);
     return createUser;
-    return createUser ? true : false;
   }
 }

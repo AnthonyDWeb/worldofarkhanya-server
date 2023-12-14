@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   async findOne(id: String) {
-    return await this.UsersModel.findById(id);
+    return await this.UsersModel.findById(id, { password: 0 });
   }
   async findOneByUsername(username: string) {
     return await this.UsersModel.findOne({ username: username });
@@ -27,6 +27,7 @@ export class UsersService {
   async update(id: String, updateUserDto: UpdateUserDto) {
     return await this.UsersModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
+      password: 0
     });
   }
   async updateField(category: String, data: any) {
