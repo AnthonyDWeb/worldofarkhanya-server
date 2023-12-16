@@ -51,6 +51,7 @@ export class AuthService {
       throw new UnauthorizedException("Ce nom d'utilisateur est déjà pris");
     user.password = await bcrypt.hash(user.password, 15);
     const createUser = await this.usersService.create(user);
+    createUser.password = undefined;
     return createUser;
   }
 }

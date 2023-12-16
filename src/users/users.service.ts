@@ -1,12 +1,17 @@
-import { Injectable, UseGuards } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('Users') private UsersModel: Model<UserDto>) {}
+  constructor(
+    @InjectModel('Users') private UsersModel: Model<UserDto>,
+    private jwtService: JwtService,
+  ) {}
 
   create(createUserDto: UserDto) {
     const createdUsers = new this.UsersModel(createUserDto);
@@ -25,11 +30,20 @@ export class UsersService {
   }
 
   async update(id: String, updateUserDto: UpdateUserDto) {
-    return await this.UsersModel.findByIdAndUpdate(id, updateUserDto, {
+    const data = updateUserDto.password
+      ? { password: await bcrypt.hash(updateUserDto.password, 15) }
+      : updateUserDto;
+    const user = await this.UsersModel.findByIdAndUpdate(id, data, {
       new: true,
-      password: 0
+      password: 0,
     });
+    const payload = { username: user.username, sub: user._id };
+    return {
+      user: user,
+      access_token: this.jwtService.sign(payload),
+    };
   }
+
   async updateField(category: String, data: any) {
     return await this.UsersModel.updateMany(
       {},

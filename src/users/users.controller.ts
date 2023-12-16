@@ -28,6 +28,8 @@ export class UsersController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    console.log("Patch id",id);
+    console.log("Patch updateUserDto",updateUserDto);
     return this.usersService.update(id, updateUserDto);
   }
   
