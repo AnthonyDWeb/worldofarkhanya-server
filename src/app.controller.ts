@@ -3,21 +3,15 @@ import {
   Controller,
   Get,
   HttpStatus,
-  Param,
   Post,
-  Query,
-  Req,
   Res,
   UploadedFile,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from './auth/jwt-auth.guard';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import * as path from 'path';
-import { callbackify } from 'util';
 import { Response } from 'express';
 import { join } from 'path';
 
