@@ -26,10 +26,15 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @Post('getfile')
+  getfile(@Body() data: any) {
+    console.log("data2",data);
+    // console.log("req",req);
+    // res.sendFile(join(process.cwd(),'./uploads/'+filename))
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    console.log("Patch id",id);
-    console.log("Patch updateUserDto",updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: any) {
     return this.usersService.update(id, updateUserDto);
   }
   

@@ -29,11 +29,18 @@ export class UsersService {
     return await this.UsersModel.findOne({ username: username });
   }
 
-  async update(id: String, updateUserDto: UpdateUserDto) {
-    const data = updateUserDto.password
-      ? { password: await bcrypt.hash(updateUserDto.password, 15) }
-      : updateUserDto;
-    const user = await this.UsersModel.findByIdAndUpdate(id, data, {
+  async update(id: String, updateUserDto: any) {
+
+    if (updateUserDto?.currentPassword) {
+      const user = await this.UsersModel.findById(id);
+      const isMatch =
+        user &&
+        (await bcrypt.compare(updateUserDto.currentPassword, user.password));
+      updateUserDto.password =
+        isMatch && (await bcrypt.hash(updateUserDto.newPassword, 15));
+    }
+    console.log("updateUserDto",updateUserDto);
+    const user = await this.UsersModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
       password: 0,
     });
