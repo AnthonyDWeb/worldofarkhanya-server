@@ -25,26 +25,32 @@ export class UsersService {
   async findOne(id: String) {
     return await this.UsersModel.findById(id, { password: 0 });
   }
+  
   async findOneByUsername(username: string) {
     return await this.UsersModel.findOne({ username: username });
   }
 
   async update(id: String, updateUserDto: any) {
+    const userData = await this.UsersModel.findById(id);
 
     if (updateUserDto?.currentPassword) {
-      const user = await this.UsersModel.findById(id);
       const isMatch =
-        user &&
-        (await bcrypt.compare(updateUserDto.currentPassword, user.password));
+        userData &&
+        (await bcrypt.compare(
+          updateUserDto.currentPassword,
+          userData.password,
+        ));
       updateUserDto.password =
         isMatch && (await bcrypt.hash(updateUserDto.newPassword, 15));
     }
-    console.log("updateUserDto",updateUserDto);
+
     const user = await this.UsersModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
       password: 0,
     });
+
     const payload = { username: user.username, sub: user._id };
+
     return {
       user: user,
       access_token: this.jwtService.sign(payload),
@@ -59,6 +65,7 @@ export class UsersService {
   }
 
   async remove(id: String) {
-    return await this.UsersModel.findByIdAndDelete(id);
+    const deleteUser = await this.UsersModel.findByIdAndDelete(id);
+    return deleteUser && { message: 'Compte supprimé' };
   }
 }
