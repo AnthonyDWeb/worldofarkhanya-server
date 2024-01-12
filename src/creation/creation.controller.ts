@@ -1,32 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CreationService } from './creation.service';
 
-@Controller('creation')
+@Controller('creations')
 export class CreationController {
   constructor(private readonly creationService: CreationService) {}
 
-  @Post()
-  create(@Body() createCreationDto: any) {
-    return this.creationService.create(createCreationDto);
+  @Post(':collection')
+  create(@Param('collection') collection: string, @Query('userID') userID: string, @Body() createCreationDto: any) {
+    return this.creationService.create(collection,userID,createCreationDto);
   }
 
-  @Get()
-  findAll() {
-    return this.creationService.findAll();
+  @Get(':creation')
+  findAll(@Param('creation') creation: string) {
+    return this.creationService.findAll(creation);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.creationService.findOne(id);
+  @Get(':creation/:id')
+  findOne(@Param('creation') creation: string, @Param('id') id: string) {
+    return this.creationService.findOne(creation,id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCreationDto: any) {
-    return this.creationService.update(id, updateCreationDto);
+  @Patch(':creation/:id')
+  update(@Param('creation') creation: string, @Param('id') id: string, @Body() updateCreationDto: any) {
+    return this.creationService.update(creation,id, updateCreationDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.creationService.remove(id);
+  @Delete(':creation/:id')
+  remove(@Param('creation') creation: string, @Param('id') id: string) {
+    return this.creationService.remove(creation,id);
   }
 }

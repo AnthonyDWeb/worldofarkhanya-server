@@ -5,6 +5,7 @@ import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { populateList } from 'src/utils/populate';
 
 @Injectable()
 export class UsersService {
@@ -13,9 +14,9 @@ export class UsersService {
     private jwtService: JwtService,
   ) {}
 
-  create(createUserDto: UserDto) {
-    const createdUsers = new this.UsersModel(createUserDto);
-    return createdUsers.save();
+  async create(createUserDto: UserDto) {
+    const createdUsers = new this.UsersModel(createUserDto).save();
+    return createdUsers;
   }
 
   async findAll() {
@@ -23,11 +24,13 @@ export class UsersService {
   }
 
   async findOne(id: String) {
-    return await this.UsersModel.findById(id, { password: 0 });
+    const list = await populateList("Users");
+    return await this.UsersModel.findById(id, { password: 0 }).populate(list);
   }
   
   async findOneByUsername(username: string) {
-    return await this.UsersModel.findOne({ username: username });
+    const list = await populateList("Users");
+    return await this.UsersModel.findOne({ username: username }, { password: 0 }).populate(list);
   }
 
   async update(id: String, updateUserDto: any) {
